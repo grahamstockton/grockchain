@@ -3,12 +3,14 @@ use crate::block::Block;
 #[derive(Clone, Debug)]
 pub struct BlockChain {
     chain: Vec<Block>,
+    difficulty: u32,
 }
 
 impl BlockChain {
-    pub fn new(data: String) -> Self {
+    pub fn new(data: String, difficulty: u32) -> Self {
         Self {
-            chain: vec![Self::create_genesis_block(data)],
+            chain: vec![Self::create_genesis_block(data, difficulty)],
+            difficulty: difficulty,
         }
     }
 
@@ -20,7 +22,11 @@ impl BlockChain {
     }
 
     pub fn add_block(&mut self, data: String) {
-        let block = Block::new(data, Some(self.get_latest_block().get_hash()));
+        let block = Block::new(
+            data,
+            Some(self.get_latest_block().get_hash()),
+            self.difficulty,
+        );
         self.chain.push(block);
     }
 
@@ -43,8 +49,8 @@ impl BlockChain {
         true
     }
 
-    fn create_genesis_block(data: String) -> Block {
-        Block::new(data, None)
+    fn create_genesis_block(data: String, difficulty: u32) -> Block {
+        Block::new(data, None, difficulty)
     }
 }
 
@@ -57,7 +63,7 @@ mod tests {
         let data_1 = "hello world".to_string();
         let data_2 = "second data".to_string();
         let data_3 = "third data".to_string();
-        let mut chain = BlockChain::new(data_1.clone());
+        let mut chain = BlockChain::new(data_1.clone(), 1);
         chain.add_block(data_2.clone());
         chain.add_block(data_3.clone());
         assert!(chain.chain.len() == 3);
@@ -71,7 +77,7 @@ mod tests {
         let data_1 = "hello world".to_string();
         let data_2 = "second data".to_string();
         let data_3 = "third data".to_string();
-        let mut chain = BlockChain::new(data_1.clone());
+        let mut chain = BlockChain::new(data_1.clone(), 1);
         chain.add_block(data_2.clone());
         chain.add_block(data_3.clone());
 
@@ -87,7 +93,7 @@ mod tests {
         let data_1 = "hello world".to_string();
         let data_2 = "second data".to_string();
         let data_3 = "third data".to_string();
-        let mut chain = BlockChain::new(data_1.clone());
+        let mut chain = BlockChain::new(data_1.clone(), 1);
         chain.add_block(data_2.clone());
         chain.add_block(data_3.clone());
 
